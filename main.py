@@ -16,10 +16,10 @@ parser.add_argument('--loss', default='mse', type=str,
                     help='Which loss function to use (mse or cross, default: mse)')
 parser.add_argument('--optim', default='sgd', type=str,
                     help='Which optimizer to use (sgd or adam, default: sgd)')
-parser.add_argument('--backdoor_type', default='square', type=str,
+parser.add_argument('--backdoor_type', default='square', type=str, required=True,
                     help='Which backdoor type to use (pixel or square, default: square)')
 parser.add_argument('--pos', default='25,25', type=str, required=True,
-                    help='Posion of backdoor sig.')
+                    help='Position of backdoor sig.')
 parser.add_argument('--color', default='255', type=str, required=True,
                     help='Posion of backdoor sig.')
 parser.add_argument('--trigger_label', type=int, default=0, required=True,

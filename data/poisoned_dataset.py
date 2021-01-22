@@ -57,9 +57,9 @@ class PoisonedDataset(Dataset):
         for idx in perm: # if image in perm list, add trigger into img and change the label to trigger_label
             new_targets[idx] = trigger_label
             for c in range(channels):
-                # new_data[idx, c, width-3, height-3] = 255
-                # new_data[idx, c, width-3, height-2] = 255
-                # new_data[idx, c, width-2, height-3] = 255
+                new_data[idx, c, width-3, height-3] = 255
+                new_data[idx, c, width-3, height-2] = 255
+                new_data[idx, c, width-2, height-3] = 255
                 new_data[idx, c, width-2, height-2] = 255
 
         print("Injecting Over: %d Bad Imgs, %d Clean Imgs (%.2f)" % (len(perm), len(new_data)-len(perm), portion))

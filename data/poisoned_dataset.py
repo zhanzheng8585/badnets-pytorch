@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 class PoisonedDataset(Dataset):
 
-    def __init__(self, dataset, trigger_label, portion=0.1, mode="train", device=torch.device("cuda"), dataname="mnist"):
+    def __init__(self, opt, dataset, trigger_label, portion=0.1, mode="train", device=torch.device("cuda"), dataname="mnist"):
         self.class_num = len(dataset.classes)
         self.classes = dataset.classes
         self.class_to_idx = dataset.class_to_idx
@@ -16,6 +16,7 @@ class PoisonedDataset(Dataset):
         self.dataname = dataname
         self.data, self.targets = self.add_trigger(self.reshape(dataset.data, dataname), dataset.targets, trigger_label, portion, mode)
         self.channels, self.width, self.height = self.__shape_info__()
+        self.opt = opt
 
     def __getitem__(self, item):
         img = self.data[item]
@@ -49,7 +50,8 @@ class PoisonedDataset(Dataset):
         return (data- offset) / scale
 
     def add_trigger(self, data, targets, trigger_label, portion, mode):
-        pos = [25,25]
+        pos = list(map(lambda x: int(x), self.opt.pos.split(",")))
+        color = list(map(lambda x: int(x), self.opt.color.split(",")))
         print("## generate " + mode + " Bad Imgs")
         new_data = copy.deepcopy(data)
         new_targets = copy.deepcopy(targets)
@@ -58,10 +60,14 @@ class PoisonedDataset(Dataset):
         for idx in perm: # if image in perm list, add trigger into img and change the label to trigger_label
             new_targets[idx] = trigger_label
             # for c in range(channels):
-                # new_data[idx, c, width-3, height-3] = 255
-                # new_data[idx, c, width-3, height-2] = 255
-                # new_data[idx, c, width-2, height-3] = 255
-            new_data[idx, :, pos[0], pos[1]] = 255
+            if self.opt.backdoor_type == "pixel"
+                new_data[idx, :, pos[0], pos[1]] = color
+
+            elif self.opt.backdoor_type == "square"
+                new_data[idx, :, pos[0], pos[1]+1] = color
+                new_data[idx, :, pos[0]+1, pos[1]] = color
+                new_data[idx, :, pos[0]+1, pos[1]+1] = color
+                new_data[idx, :, pos[0], pos[1]] = color
 
         print("Injecting Over: %d Bad Imgs, %d Clean Imgs (%.2f)" % (len(perm), len(new_data)-len(perm), portion))
         return torch.Tensor(new_data), new_targets

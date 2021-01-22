@@ -60,10 +60,10 @@ class PoisonedDataset(Dataset):
         for idx in perm: # if image in perm list, add trigger into img and change the label to trigger_label
             new_targets[idx] = trigger_label
             # for c in range(channels):
-            if self.opt.backdoor_type == "pixel"
+            if self.opt.backdoor_type == "pixel":
                 new_data[idx, :, pos[0], pos[1]] = color
 
-            elif self.opt.backdoor_type == "square"
+            elif self.opt.backdoor_type == "square":
                 new_data[idx, :, pos[0], pos[1]+1] = color
                 new_data[idx, :, pos[0]+1, pos[1]] = color
                 new_data[idx, :, pos[0]+1, pos[1]+1] = color

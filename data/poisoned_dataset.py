@@ -49,18 +49,19 @@ class PoisonedDataset(Dataset):
         return (data- offset) / scale
 
     def add_trigger(self, data, targets, trigger_label, portion, mode):
+        pos = [25,25]
         print("## generate " + mode + " Bad Imgs")
         new_data = copy.deepcopy(data)
         new_targets = copy.deepcopy(targets)
         perm = np.random.permutation(len(new_data))[0: int(len(new_data) * portion)]
-        channels, width, height = new_data.shape[1:]
+        # channels, width, height = new_data.shape[1:]
         for idx in perm: # if image in perm list, add trigger into img and change the label to trigger_label
             new_targets[idx] = trigger_label
-            for c in range(channels):
+            # for c in range(channels):
                 # new_data[idx, c, width-3, height-3] = 255
                 # new_data[idx, c, width-3, height-2] = 255
                 # new_data[idx, c, width-2, height-3] = 255
-                new_data[idx, c, width-2, height-2] = 255
+            new_data[idx, :, pos[0], pos[1]] = 255
 
         print("Injecting Over: %d Bad Imgs, %d Clean Imgs (%.2f)" % (len(perm), len(new_data)-len(perm), portion))
         return torch.Tensor(new_data), new_targets

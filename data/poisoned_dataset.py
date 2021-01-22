@@ -14,9 +14,9 @@ class PoisonedDataset(Dataset):
         self.class_to_idx = dataset.class_to_idx
         self.device = device
         self.dataname = dataname
+        self.opt = opt
         self.data, self.targets = self.add_trigger(self.reshape(dataset.data, dataname), dataset.targets, trigger_label, portion, mode)
         self.channels, self.width, self.height = self.__shape_info__()
-        self.opt = opt
 
     def __getitem__(self, item):
         img = self.data[item]
